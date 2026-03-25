@@ -24,7 +24,7 @@
 ### 설치 및 실행 방법
 1. **저장소를 클론합니다.**
    ```bash
-   git clone [https://github.com/parkchanheyk/Text_ConsoleRPG_Project.git](https://github.com/parkchanheyk/Text_ConsoleRPG_Project.git)
+   git clone https://github.com/parkchanheyk/Text_ConsoleRPG_Project.git
    ```
 2. Visual Studio 2022에서 `[프로젝트명].sln` 파일을 엽니다.
 3. 상단 솔루션 구성에서 **Release** 또는 **Debug**를 선택하고 **x64** 아키텍처를 확인합니다.
