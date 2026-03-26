@@ -11,13 +11,17 @@ using namespace std;
 LifeCycle::LifeCycle() : isRunning(true), playerX(0), playerY(0) {}
 
 // 입력 처리 로직 구현
-void LifeCycle::ProcessInput() {
-    if (_kbhit()) {
+void LifeCycle::ProcessInput() 
+{
+    if (_kbhit())
+    {
         int key = _getch();
 
-        if (key == 224) {
+        if (key == 224) 
+        {
             key = _getch();
-            switch (key) {
+            switch (key) 
+            {
             case KEY_UP:
                 playerY--;
                 cout << "위로 이동! 현재 위치: (" << playerX << ", " << playerY << ")" << endl;
@@ -36,8 +40,10 @@ void LifeCycle::ProcessInput() {
                 break;
             }
         }
-        else {
-            switch (key) {
+        else 
+        {
+            switch (key)
+            {
             case 'i':
             case 'I':
                 cout << "\n====================" << endl;
@@ -64,12 +70,14 @@ void LifeCycle::ProcessInput() {
     }
 }
 
-void LifeCycle::BeginPlay() {
+void LifeCycle::BeginPlay() 
+{
     cout << "게임을 시작합니다." << endl;
     cout << "[방향키]: 이동 | [I]: 인벤토리 | [ESC]: 메뉴\n" << endl;
 }
 
-void LifeCycle::Tick() {
+void LifeCycle::Tick() 
+{
     ProcessInput();
 
     // 게임 로직 업데이트 (예: 몬스터 이동, 충돌 체크 등)
@@ -77,10 +85,12 @@ void LifeCycle::Tick() {
     Sleep(10); // 틱간 시간차 
 }
 
-void LifeCycle::EndPlay() {
+void LifeCycle::EndPlay() 
+{
     cout << "\n게임을 종료합니다. 플레이해주셔서 감사합니다!" << endl;
 }
 
-bool LifeCycle::IsRunning() const {
+bool LifeCycle::IsRunning() const 
+{
     return isRunning;
 }

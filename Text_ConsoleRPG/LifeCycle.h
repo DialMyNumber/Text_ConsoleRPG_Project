@@ -1,7 +1,8 @@
 // LifeCycle.h
 #pragma once 
 
-class LifeCycle {
+class LifeCycle 
+{
 private:
     // 키 코드 상수
     static const int KEY_UP = 72;

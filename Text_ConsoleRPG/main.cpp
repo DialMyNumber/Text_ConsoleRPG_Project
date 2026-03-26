@@ -4,7 +4,8 @@
 #include <windows.h>
 #include "LifeCycle.h" 
 
-int main() {
+int main() 
+{
 
 	LifeCycle myLifeCycle; // °´Ã¼ »ý¼º
 
