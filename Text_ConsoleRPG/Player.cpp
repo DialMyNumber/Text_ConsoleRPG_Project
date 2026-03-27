@@ -1,8 +1,9 @@
 #include "Player.h"
 #include <iostream>
 
+
 // 부모 생성자 Character(name)을 호출하여 이름을 초기화합니다.
-Player::Player(std::string name, std::string job) : Character(name)
+Player::Player(std::string name, std::string job) : Character(name), inventory(10), money(1000)
 {
     this->job = job;
     this->level = 1;      // 기본값 초기화
@@ -11,12 +12,43 @@ Player::Player(std::string name, std::string job) : Character(name)
     this->ATK = 10;
     this->exp = 0;
     this->speed = 5;
+
+
 }
 
-void Player::attack(Enemy* enemy)
+bool Player::BuyItem(std::shared_ptr<ItemBase> item, size_t amount)
+{
+    size_t totalCost = item->buyCost * amount;
+
+    // 1. 돈이 충분한가?
+    if (!money.canAfford(totalCost)) {
+        std::cout << "골드가 부족합니다!" << std::endl;
+        return false;
+    }
+
+    // 2. 인벤토리에 공간이 있는가?
+    if (inventory.GetAcceptableAmount(item) < amount) {
+        std::cout << "인벤토리에 공간이 부족합니다!" << std::endl;
+        return false;
+    }
+
+    // 3. 결제 및 아이템 추가
+    money.spendMoney(totalCost); // 돈 차감
+    inventory.AddItem(item, amount); // 아이템 추가
+
+    std::cout << item->itemName << " " << amount << "개를 구매했습니다." << std::endl;
+    return true;
+}
+
+void Player::attack(Character* enemy)
 {
     // 여기에 플레이어만의 공격 로직 구현 (나중에 Enemy의 takeDamage 호출 등)
-    std::cout << "[플레이어] " << name << "이(가) 적을 공격합니다!" << std::endl;
+    if (enemy == nullptr) return;
+
+    std::cout << "[플레이어] " << this->name << "의 맹렬한 공격!" << std::endl;
+
+    // 플레이어의 공격력(ATK)을 적의 takeDamage로 전달
+    enemy->takeDamage(this->ATK);
 }
 
 void Player::printStatus()

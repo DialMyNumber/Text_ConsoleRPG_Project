@@ -6,10 +6,12 @@ class Character
 {
 public:
 	Character(std::string name);
+	virtual ~Character() = default; // 안전한 메모리 해제를 위한 가상 소멸자
 
-	virtual void attack(Enemy* enemy) = 0;
+	virtual void attack(Character* enemy) = 0;
 	virtual void death();
 	virtual void printStatus();
+	virtual void takeDamage(int amount); // 데미지를 입는 가상 함수 추가
 
 	// getter 함수
 	std::string getName();

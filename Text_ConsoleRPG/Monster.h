@@ -4,15 +4,12 @@
 #include <string>
 #include <random>
 #include <iostream>
-class Enemy;
-class Player;
 
 class Monster : public Character
 {
 public:
 	Monster(std::string name);
-	void attack(Enemy* enemy) override {}; // 지금 못씀
-	void attack(Player* player);           // 나중에 이런식으로
+	virtual void attack(Character* enemy) override ; // 지금 못씀
 	void death() override final;
 	void printStatus() override final;
 

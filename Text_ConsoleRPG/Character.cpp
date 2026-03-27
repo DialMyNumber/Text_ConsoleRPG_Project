@@ -6,7 +6,7 @@ Character::Character(std::string name)
 	this->name = name;
 }
 
-void Character::attack(Enemy* enemy)
+void Character::attack(Character* enemy)
 {
 	std::cout <<"공격합니다!" << std::endl;
 }
@@ -22,6 +22,16 @@ void Character::printStatus()
 	std::cout << "현재 HP: " << currentHP << std::endl;
 	std::cout << "공격력: " << ATK << std::endl;
 	std::cout << "속도: " << speed << std::endl;
+}
+void Character::takeDamage(int amount) {
+	this->currentHP -= amount; // 현재 체력 차감
+
+	std::cout << name << "이(가) " << amount << "의 피해를 입었습니다!" << std::endl;
+
+	if (this->currentHP <= 0) {
+		this->currentHP = 0;
+		this->death(); // 체력이 0 이하면 사망 처리 호출
+	}
 }
 
 // getter 함수

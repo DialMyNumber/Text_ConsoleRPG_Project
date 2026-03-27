@@ -8,13 +8,13 @@ class BossMonster :public Character
 public:
 	BossMonster();
 	
-	void attack(Enemy* enemy) override;
+	void attack(Character* enemy) override;
 
 	void printStatus() override;
 	
 	void death() override;
 
-	void attackPattern4(Enemy* enemy);
+	void attackPattern4(Character* enemy);
 
 	int determinePhase(int currentHP);
 

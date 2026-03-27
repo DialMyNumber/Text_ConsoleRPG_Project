@@ -31,7 +31,7 @@ int BossMonster::determinePhase(int currentHP)
 	return phase;
 }
 
-void BossMonster::attack(Enemy* enemy)
+void BossMonster::attack(Character* enemy)
 {	
 	int pattern = 0;
 
@@ -97,7 +97,7 @@ void BossMonster::death()
 	std::cout << name << "À»(¸¦) ¾²·¯¶ß·È½À´Ï´Ù~!!\n\n";
 }
 
-void BossMonster::attackPattern4(Enemy* enemy)
+void BossMonster::attackPattern4(Character* enemy)
 {
 	std::cout << name << "ÀÌ(°¡) ÄûÁî °ø°İÀ» ½ÃÀüÇÕ´Ï´Ù!\n\n";
 	std::cout << name << ": ³ÊÃ³·³ ³ª»Û ¾ÆÀÌ´Â ¹úÀ» ¹Ş¾Æ¾ß ÇÑ´Ù ÂïÂï...\n";

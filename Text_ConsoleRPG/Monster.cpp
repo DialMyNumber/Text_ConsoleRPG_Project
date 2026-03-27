@@ -6,9 +6,9 @@ Monster::Monster(std::string name) : Character(name)
 	this->name = name;
 }
 
-void Monster::attack(Player* player)
+void Monster::attack(Character* enemy)
 {
-	std::cout << this->name << "이(가)" << player << "을(를) 공격했다!" << std::endl;
+	std::cout << this->name << "이(가)" << enemy << "을(를) 공격했다!" << std::endl;
 	// player->setCurrentHP() = player->getCurrentHP() - this->getATK();
 }
 
