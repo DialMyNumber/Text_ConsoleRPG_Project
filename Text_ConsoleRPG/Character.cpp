@@ -64,7 +64,7 @@ void Character::setCurrentHP(int currentHP)
 {
 	this->currentHP = currentHP;
 }
-void Character::setAttack(int ATK)
+void Character::setATK(int ATK)
 {
 	this->ATK = ATK;
 }

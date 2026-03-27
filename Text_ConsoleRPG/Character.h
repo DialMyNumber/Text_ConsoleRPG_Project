@@ -25,7 +25,7 @@ public:
 
 	void setMaxHP(int MaxHP);
 	void setCurrentHP(int currentHP);
-	void setAttack(int ATK);
+	void setATK(int ATK);
 	void setExp(int Exp);
 	void setSpeed(int speed);
 
