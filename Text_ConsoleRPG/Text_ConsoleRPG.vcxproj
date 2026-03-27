@@ -126,6 +126,8 @@
     <ClCompile Include="BossMonster.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ConsumeItem.cpp" />
+    <ClCompile Include="CreateItem.cpp" />
+    <ClCompile Include="EquipItem.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemBase.cpp" />
     <ClCompile Include="LifeCycle.cpp" />
@@ -138,6 +140,8 @@
     <ClInclude Include="BossMonster.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="ConsumeItem.h" />
+    <ClInclude Include="CreateItem.h" />
+    <ClInclude Include="EquipItem.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="ItemBase.h" />
     <ClInclude Include="LifeCycle.h" />
