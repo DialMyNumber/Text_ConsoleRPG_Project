@@ -25,8 +25,8 @@ struct ItemBasePointerComparer
 			return lhs->itemName < rhs->itemName;
 		}
 
-		// 3차 : 서로 동일한 것으로 간주
-		return false;
+		// 3차 : 서로의 typeid(동적 클래스 타입)가 동일한지 확인
+		return typeid(lhs.get()) != typeid(rhs.get());
 	}
 };
 
