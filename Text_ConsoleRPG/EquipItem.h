@@ -11,38 +11,11 @@ private:
 	int additionalDefense = 0;
 
 public:
-	EquipItem(const std::string& name, int atk, int def)
-	{
-		itemType = EItemType::Equip;
-	}
+	EquipItem() {}
+	
+	EquipItem(const std::string& name, int atk, int def);
 
-	void Equip(Character* target)
-	{
-		std::cout << "아이템(" << itemName << ")을 <장착>" << std::endl;
+	void Equip(Character* target);
 
-		if (!target)
-		{
-			return;
-		}
-
-		// 장착여부 판단 코드?
-
-		target->setATK(target->getATK() + additionalAttack);
-		target->setMaxHP(target->getMaxHP() + additionalDefense);
-	}
-
-	void UnEquip(Character* target)
-	{
-		std::cout << "아이템(" << itemName << ")을 <장착 해제>" << std::endl;
-
-		if (!target)
-		{
-			return;
-		}
-
-		// 장착여부 판단 코드?
-
-		target->setATK(target->getATK() - additionalAttack);
-		target->setMaxHP(target->getMaxHP() - additionalDefense);
-	}
+	void UnEquip(Character* target);
 };
