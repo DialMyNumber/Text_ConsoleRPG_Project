@@ -3,65 +3,114 @@
 #include "Shop.h"
 #include "Money.h"
 #include "ItemBase.h"
+#include "Player.h"
 #include <iostream>
 
-bool TransactionManager::buyItem(Shop& shop, std::shared_ptr<ItemBase> item, int count, Money& money)
+bool TransactionManager::buyItem(Shop& shop, std::shared_ptr<ItemBase> item,
+    std::shared_ptr<Player> player, size_t count)
 {
-    if (!item) return false;
-
-    if (!shop.hasStock(item, count))
+    if (!item)
     {
-        std::cout << item->itemName << " 재고 부족\n";
-        return false;
+        std::cout << "item null\n";
+        system("pause");
     }
+
+    if (!player)
+    {
+        std::cout << "player null\n";
+        system("pause");
+    }
+
+    if (!player->GetInventory())
+    {
+        std::cout << "inventory null\n";
+        system("pause");
+    }
+
+    if (!shop.hasStock(item, count)) return false;
 
     size_t cost = item->buyCost * count;
 
-    if (!money.spendMoney(cost))
-    {
-        std::cout << "돈 부족\n";
-        return false;
-    }
+    if (!player->GetMoney()->canAfford(cost)) return false;
 
+    if (!player->GetInventory()->AddItem(item, count)) return false;
+
+    player->GetMoney()->spendMoney(cost);
     shop.reduceStock(item, count);
 
-    std::cout << item->itemName << " " << count << "개 구매 성공\n";
     return true;
 }
 
-bool TransactionManager::sellItem(Shop& shop, std::shared_ptr<ItemBase> item, int count, Money& money)
+bool TransactionManager::sellItem(Shop& shop, std::shared_ptr<ItemBase> item,
+    std::shared_ptr<Player> player, size_t count)
 {
-    if (!item) return false;
+    if (!item)
+    {
+        std::cout << "item null\n";
+        system("pause");
+    }
+
+    if (!player)
+    {
+        std::cout << "player null\n";
+        system("pause");
+    }
+
+    if (!player->GetInventory())
+    {
+        std::cout << "inventory null\n";
+        system("pause");
+    }
+
+    if (!player->GetInventory()->RemoveItem(item, count)) {
+        std::cout << "인벤토리 제거 실패\n";
+        return false;
+    }
+
+    std::cout << "인벤토리 제거 성공\n";
 
     size_t earn = item->sellCost * count;
 
-    money.getMoney(earn);
+    player->GetMoney()->getMoney(earn);
+
     shop.addBuyBack(item, count);
 
-    std::cout << item->itemName << " " << count << "개 판매 성공\n";
+    std::cout << "buyback 추가됨\n";
+
     return true;
 }
 
-bool TransactionManager::buyBackItem(Shop& shop, std::shared_ptr<ItemBase> item, int count, Money& money)
+bool TransactionManager::buyBackItem(Shop& shop, std::shared_ptr<ItemBase> item,
+    std::shared_ptr<Player> player, size_t count)
 {
-    if (!item) return false;
-
-    if (!shop.hasBuyBack(item, count))
+    if (!item)
     {
-        std::cout << item->itemName << " 재구매 불가\n";
-        return false;
+        std::cout << "item null\n";
+        system("pause");
     }
+
+    if (!player)
+    {
+        std::cout << "player null\n";
+        system("pause");
+    }
+
+    if (!player->GetInventory())
+    {
+        std::cout << "inventory null\n";
+        system("pause");
+
+    }
+    if (!shop.hasBuyBack(item, count)) return false;
 
     size_t cost = item->buyCost * count;
 
-    if (!money.spendMoney(cost))
-    {
-        std::cout << "돈 부족\n";
-        return false;
-    }
+    if (!player->GetMoney()->canAfford(cost)) return false;
 
+    if (!player->GetInventory()->AddItem(item, count)) return false;
+
+    player->GetMoney()->spendMoney(cost);
     shop.reduceBuyBack(item, count);
 
-    std::cout << item->itemName << " " << count << "개 재구매 성공\n";
     return true;
 }

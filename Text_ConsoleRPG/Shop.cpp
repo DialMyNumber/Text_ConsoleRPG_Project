@@ -4,19 +4,19 @@
 
 class ItemBase;
 
-void Shop::addStock(std::shared_ptr<ItemBase> item, int count)
+void Shop::addStock(std::shared_ptr<ItemBase> item, size_t count)
 {
     if (!item) return;
     stock[item] += count;
 }
 
-bool Shop::hasStock(std::shared_ptr<ItemBase> item, int count) const
+bool Shop::hasStock(std::shared_ptr<ItemBase> item, size_t count) const
 {
     auto it = stock.find(item);
     return (it != stock.end() && it->second >= count);
 }
 
-void Shop::reduceStock(std::shared_ptr<ItemBase> item, int count)
+void Shop::reduceStock(std::shared_ptr<ItemBase> item, size_t count)
 {
     auto it = stock.find(item);
     if (it == stock.end()) return;
@@ -26,19 +26,19 @@ void Shop::reduceStock(std::shared_ptr<ItemBase> item, int count)
         stock.erase(it);
 }
 
-void Shop::addBuyBack(std::shared_ptr<ItemBase> item, int count)
+void Shop::addBuyBack(std::shared_ptr<ItemBase> item, size_t count)
 {
     if (!item) return;
     buyBackStock[item] += count;
 }
 
-bool Shop::hasBuyBack(std::shared_ptr<ItemBase> item, int count) const
+bool Shop::hasBuyBack(std::shared_ptr<ItemBase> item, size_t count) const
 {
     auto it = buyBackStock.find(item);
     return (it != buyBackStock.end() && it->second >= count);
 }
 
-void Shop::reduceBuyBack(std::shared_ptr<ItemBase> item, int count)
+void Shop::reduceBuyBack(std::shared_ptr<ItemBase> item, size_t count)
 {
     auto it = buyBackStock.find(item);
     if (it == buyBackStock.end()) return;
@@ -48,12 +48,12 @@ void Shop::reduceBuyBack(std::shared_ptr<ItemBase> item, int count)
         buyBackStock.erase(it);
 }
 
-const std::map<std::shared_ptr<ItemBase>, int>& Shop::getStock() const
+const std::map<std::shared_ptr<ItemBase>, size_t>& Shop::getStock() const
 {
     return stock;
 }
 
-const std::map<std::shared_ptr<ItemBase>, int>& Shop::getBuyBack() const
+const std::map<std::shared_ptr<ItemBase>, size_t>& Shop::getBuyBack() const
 {
     return buyBackStock;
 }

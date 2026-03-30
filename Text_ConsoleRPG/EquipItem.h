@@ -14,7 +14,7 @@ private:
 public:
 	EquipItem() {}
 
-	EquipItem(const std::string& name, int atk, int def);
+	EquipItem(const std::string& name, int atk, int def, int buyCost);
 
 	void Equip(Character& target);
 

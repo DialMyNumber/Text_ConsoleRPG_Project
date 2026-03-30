@@ -8,23 +8,28 @@
 class Shop;
 class Money;
 class ItemBase;
+class Player;
 
 class ShopUI
 {
 public:
-    static bool updateShopTick(Shop& shop, Money& money);
+	bool updateShopTick(Shop&, std::shared_ptr<Player>);
+	void setPlayer(std::shared_ptr <Player> player);
 
 private:
-    static void showMenu(int row);
-    static void showItemLists(Shop& shop, int startRow);
-    static std::shared_ptr<ItemBase> selectItem(
-        const std::map<std::shared_ptr<ItemBase>, int>& items, int startRow);
+	void ResetUIState();
+	void showMenu(int row);
+	void showItemLists(Shop& shop, int startRow);
 
-    static void gotoxy(int x, int y);
-    static void clearLine(int row);
-    static void pushLog(const std::string& msg);
-    static void renderLog(int startRow);
+	template<typename MapType>
+	std::shared_ptr<ItemBase> selectItem(const MapType& items, int startRow);
 
-    static std::deque<std::string> s_logs;
-    static constexpr int MAX_LOGS = 5;
+	void gotoxy(int x, int y);
+	void clearLine(int row);
+	void pushLog(const std::string& msg);
+	void renderLog(int startRow);
+
+	std::deque<std::string> s_logs;
+	static constexpr int MAX_LOGS = 5;
+	std::shared_ptr<Player> myPlayer = nullptr;
 };

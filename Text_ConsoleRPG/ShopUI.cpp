@@ -3,6 +3,7 @@
 #include "Money.h"
 #include "TransactionManager.h"
 #include "ItemBase.h"
+#include "Player.h"
 #include <iostream>
 #include <vector>
 #include <conio.h>
@@ -26,9 +27,6 @@ static constexpr int STOCK_ROWS = 8;
 static constexpr int MENU_ROW = LIST_ROW + STOCK_ROWS + 1;
 static constexpr int INPUT_ROW = MENU_ROW + 2;
 static constexpr int LOG_START = INPUT_ROW + 2;
-
-// 정적 멤버 초기화
-std::deque<std::string> ShopUI::s_logs;
 
 // ── 유틸리티 ──────────────────────────────────
 void ShopUI::gotoxy(int x, int y)
@@ -61,6 +59,11 @@ void ShopUI::renderLog(int startRow)
         if (i < (int)s_logs.size())
             std::cout << " " << s_logs[i];
     }
+}
+
+void ShopUI::ResetUIState()
+{
+    while (_kbhit()) _getch();
 }
 
 // ── 메뉴 출력 ────────────────────────────────
@@ -105,21 +108,27 @@ void ShopUI::showItemLists(Shop& shop, int startRow)
 }
 
 // ── 아이템 선택 ───────────────────────────────
-std::shared_ptr<ItemBase> ShopUI::selectItem(
-    const std::map<std::shared_ptr<ItemBase>, int>& items, int startRow)
+template<typename MapType>
+std::shared_ptr<ItemBase> ShopUI::selectItem(const MapType& items, int startRow)
 {
-    static std::vector<std::shared_ptr<ItemBase>> itemList;
-    static int  selectedIndex = 0;
-    static bool initialized = false;
-
-    if (!initialized)
+    if (items.empty())
     {
-        itemList.clear();
-        for (auto& pair : items)
-            itemList.push_back(pair.first);
-        selectedIndex = 0;
-        initialized = true;
+        clearLine(startRow);
+        std::cout << "아이템이 없습니다.";
+        return nullptr;
     }
+
+    std::vector<std::shared_ptr<ItemBase>> itemList;
+    static int selectedIndex = 0;
+
+    for (auto& pair : items)
+        itemList.push_back(pair.first);
+
+    if (itemList.empty())
+        return nullptr;
+
+    if (selectedIndex >= itemList.size())
+        selectedIndex = 0;
 
     int row = startRow;
     clearLine(row++);
@@ -134,8 +143,6 @@ std::shared_ptr<ItemBase> ShopUI::selectItem(
             << ", 가격: " << itemList[i]->buyCost << ")";
         ++row;
     }
-    while (row < startRow + STOCK_ROWS)
-        clearLine(row++);
 
     if (!_kbhit()) return nullptr;
 
@@ -143,25 +150,40 @@ std::shared_ptr<ItemBase> ShopUI::selectItem(
     if (key == 224)
     {
         key = _getch();
-        if (key == 72) { if (--selectedIndex < 0) selectedIndex = (int)itemList.size() - 1; }
-        else if (key == 80) { if (++selectedIndex >= (int)itemList.size()) selectedIndex = 0; }
+
+        if (key == 72)
+        {
+            selectedIndex--;
+            if (selectedIndex < 0)
+                selectedIndex = (int)itemList.size() - 1;
+        }
+        else if (key == 80)
+        {
+            selectedIndex++;
+            if (selectedIndex >= (int)itemList.size())
+                selectedIndex = 0;
+        }
     }
-    else if (key == 13) // Enter
+    else if (key == 13)
     {
-        auto selected = itemList[selectedIndex];
-        initialized = false;
-        return selected;
-    }
-    else if (key == 27) // ESC
-    {
-        initialized = false;
+        ResetUIState();
+        return itemList[selectedIndex];
     }
 
     return nullptr;
 }
 
+
+void ShopUI::setPlayer(std::shared_ptr <Player> player)
+{
+    if (myPlayer == nullptr)
+    {
+        myPlayer = player;
+    }
+}
+
 // ── 메인 틱 ───────────────────────────────────
-bool ShopUI::updateShopTick(Shop& shop, Money& money)
+bool ShopUI::updateShopTick(Shop& shop, std::shared_ptr<Player> player)
 {
     enum class EState { Main, SelectItem, InputCount };
 
@@ -188,7 +210,7 @@ bool ShopUI::updateShopTick(Shop& shop, Money& money)
     std::cout << "==========================================";
     clearLine(MONEY_ROW + 2); // HEADER 3줄 이후 돈 표시
     gotoxy(0, MONEY_ROW + 2);
-    std::cout << "[현재 돈: " << money.getCurrentMoney() << "]";
+    std::cout << "[현재 돈: " << player->GetMoney()->getCurrentMoney() << "]";
 
     switch (state)
     {
@@ -206,12 +228,14 @@ bool ShopUI::updateShopTick(Shop& shop, Money& money)
         {
             initialized = false;
             s_logs.clear();
+            ResetUIState();
             state = EState::Main;
             return false;
         }
         if (key >= '1' && key <= '3')
         {
             action = key - '0';
+            ResetUIState();
             state = EState::SelectItem;
         }
         break;
@@ -220,28 +244,53 @@ bool ShopUI::updateShopTick(Shop& shop, Money& money)
     // ── 2. 아이템 선택 ──
     case EState::SelectItem:
     {
+        selectedItem = nullptr;
+
         showMenu(MENU_ROW + 2);
 
         // 목록이 비어있으면 로그 출력 후 메인으로 복귀
         if (action == 3 && shop.getBuyBack().empty())
         {
             pushLog("! 재구매 가능한 아이템이 없습니다.");
+            ResetUIState();
             state = EState::Main;
             break;
         }
         if (action == 1 && shop.getStock().empty())
         {
             pushLog("! 판매 중인 아이템이 없습니다.");
+            ResetUIState();
             state = EState::Main;
             break;
         }
 
-        const auto& src = (action == 3) ? shop.getBuyBack() : shop.getStock();
-        selectedItem = selectItem(src, LIST_ROW + 2);
+
+        if (action == 1) // 구매
+        {
+            selectedItem = selectItem(shop.getStock(), LIST_ROW + 2);
+        }
+        else if (action == 2) // 판매
+        {
+            if (player->GetInventory()->container.empty())
+            {
+                pushLog("! 인벤토리가 비어 있습니다.");
+                ResetUIState();
+                state = EState::Main;
+                break;
+            }
+
+            selectedItem = selectItem(player->GetInventory()->container, LIST_ROW + 2);
+        }
+        else if (action == 3) // 재구매
+        {
+            selectedItem = selectItem(shop.getBuyBack(), LIST_ROW + 2);
+        }
 
         if (selectedItem)
+        {
+            ResetUIState();
             state = EState::InputCount;
-
+        }
         break;
     }
 
@@ -286,30 +335,37 @@ bool ShopUI::updateShopTick(Shop& shop, Money& money)
 
                 if (action == 1)
                 {
-                    TransactionManager::buyItem(shop, selectedItem, count, money);
-                    pushLog("구매 완료: " + selectedItem->itemName
-                        + " x" + std::to_string(count));
+                    if (TransactionManager::buyItem(shop, selectedItem, myPlayer, count))
+                        pushLog("구매 완료: " + selectedItem->itemName + " x" + std::to_string(count));
+                    else
+                        pushLog("! 구매 실패");
                 }
                 else if (action == 2)
                 {
-                    TransactionManager::sellItem(shop, selectedItem, count, money);
-                    pushLog("판매 완료: " + selectedItem->itemName
-                        + " x" + std::to_string(count));
+                    if (TransactionManager::sellItem(shop, selectedItem, myPlayer, count))
+                        pushLog("판매 완료: " + selectedItem->itemName + " x" + std::to_string(count));
+                    else
+                        pushLog("! 판매 실패");
                 }
                 else if (action == 3)
                 {
-                    TransactionManager::buyBackItem(shop, selectedItem, count, money);
-                    pushLog("재구매 완료: " + selectedItem->itemName
-                        + " x" + std::to_string(count));
+                    if (TransactionManager::buyBackItem(shop, selectedItem, myPlayer, count))
+                        pushLog("구매 완료: " + selectedItem->itemName + " x" + std::to_string(count));
+                    else
+                        pushLog("! 재구매 실패");
                 }
 
                 inputInited = false;
+                ResetUIState();
+                selectedItem = nullptr;
                 state = EState::Main;
             }
         }
         else if (key == 27) // ESC
         {
             inputInited = false;
+            ResetUIState();
+            selectedItem = nullptr;
             state = EState::Main;
         }
         break;

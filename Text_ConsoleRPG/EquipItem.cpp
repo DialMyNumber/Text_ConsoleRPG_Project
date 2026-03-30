@@ -1,11 +1,12 @@
 #include "EquipItem.h"
 
-EquipItem::EquipItem(const std::string& name, int atk, int def)
+EquipItem::EquipItem(const std::string& name, int atk, int def, int buyCost)
 {
     itemType = EItemType::Equip;
     itemName = name;
     additionalAttack = atk;
     additionalDefense = def;
+    this->buyCost = buyCost;
 }
 
 void EquipItem::Equip(Character& target)

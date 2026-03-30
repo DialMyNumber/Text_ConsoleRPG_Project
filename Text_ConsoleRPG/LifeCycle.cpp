@@ -8,6 +8,7 @@
 #include <string>
 #include "ConsumeItem.h"    // ConsumeItem, HPPotionItem
 #include "InventoryUI.h"
+#include "EquipItem.h"
 
 using namespace std;
 
@@ -32,23 +33,36 @@ LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), dis
     money = std::make_unique<Money>(1000);
     shopUI = std::make_unique<ShopUI>();
 
-    auto potion = std::make_shared<ItemBase>(
-        EItemType::Consume,
-        "포션",
-        99,
-        25,
-        50
-    );
-    auto sword = std::make_shared<ItemBase>(
-        EItemType::Equip,
-        "검",
-        1,
-        25,
-        50
-    );
+    auto scroll = std::make_shared<ExpScroll>
+        (
+            "초급 경험치 스크롤",
+            50,
+            1
+        );
+    auto sword = std::make_shared<EquipItem>
+        (
+            "낡고 녹슨 검",
+            50,
+            50,
+            100
+        );
 
-    shop->addStock(potion, 10);
-    shop->addStock(sword, 1);
+    auto smallPotion = std::make_shared<HPPotionItem>
+        (
+            "소형 체력 포션",
+            10,
+            1,
+            50
+        );
+
+    mainPlayer->GetInventory()->AddItem(scroll, 3);
+    mainPlayer->GetInventory()->AddItem(smallPotion, 10);
+    mainPlayer->GetInventory()->AddItem(sword, 1);
+
+    shop->addStock(smallPotion, 100);
+    shop->addStock(scroll, 100);
+    shop->addStock(sword, 10);
+
     // 배경 패턴 초기화 (멤버 변수 사용)
     background = ".... ^ .... _ .... * .... ^ .... _ .... * .... ^ .... _ .... * .... ^ ....";
 
@@ -149,7 +163,7 @@ void LifeCycle::HandleShop()
     Gotoxy(0, 0);
 
     // ShopUI 결과 받기
-    bool stay = ShopUI::updateShopTick(*shop, *money);
+    bool stay = shopUI->updateShopTick(*shop, mainPlayer);
 
     // false면 마을로 복귀
     if (!stay)

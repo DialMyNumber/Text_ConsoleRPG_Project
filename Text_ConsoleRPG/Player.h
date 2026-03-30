@@ -19,9 +19,10 @@ public:
 	virtual void takeDamage(int amount) override; // 데미지를 입는 함수도 재정의
 
     std::shared_ptr<Inventory> GetInventory() { return inventory; }; // 플레이어의 인벤토리
-	Money& GetMoney() { return money; }; // 플레이어의 돈
+    std::shared_ptr <Money> GetMoney() { return money; }; // 플레이어의 돈
 
 	bool BuyItem(std::shared_ptr<ItemBase> item, size_t amount);  
+    bool SellItem(std::shared_ptr<ItemBase> item, size_t amount);
 
     void addExp(int amount); // 경험치 획득 함수
     void levelUp();          // 레벨업 처리 함수
@@ -33,5 +34,5 @@ private:
 	// 플레이어는 인벤토리와 돈을 가지고 있습니다. (Character에는 없는 속성)
 
 	std::shared_ptr<Inventory> inventory; // 플레이어의 인벤토리
-	Money money; // 플레이어의 돈
+    std::shared_ptr<Money> money; // 플레이어의 돈
 };
