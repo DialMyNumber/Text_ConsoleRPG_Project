@@ -2,11 +2,14 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <set>
 #include "Player.h" // 앞서 만든 플레이어 클래스
 #include "ItemBase.h"
 #include "Shop.h"
 #include "ShopUI.h"
 #include "Money.h"
+#include "Inventory.h"
+#include "Monster.h"
 
 // 입력 키코드 매크로 지정
 #define KEY_UP 72
@@ -39,6 +42,7 @@ private:
     bool isRunning;
     EGameState currentState;
     int distance; // 던전 이동 거리
+    float battleTimer = 0.0f;      // 몬스터와 마주친 시간 측정    
 
     // 2. 키 코드 상수 (상태 핸들러에서 공용으로 사용)
     //static const int KEY_UP = 72;
@@ -54,6 +58,9 @@ private:
     std::unique_ptr<Money> money;
     std::string background;             // 던전 배경 문자열
     std::vector<std::string> catArt;    // 고양이 아스키 아트
+    std::set<int> defeatedPoints;    // 처치된 몬스터 정보 저장 
+    std::shared_ptr<Monster> currentMonster; // 현재 화면에 보여줄 몬스터 포인터
+    std::map<int, std::shared_ptr<Monster>> dungeonMonsters; // 몬스터의 위치와 몬스터 객체를 담는 dungeonMonsters 맵
 
     // 4. 내부 로직 처리 함수 (Private)
     void Gotoxy(int x, int y);

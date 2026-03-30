@@ -183,3 +183,67 @@ BattleManager::EBattleResult BattleManager::ProcessTurn(std::shared_ptr<Player> 
 
 	return EBattleResult::Progress; // 전투 계속
 }
+
+void BattleManager::BattleWithMonster(std::shared_ptr<Player> player, std::shared_ptr<Character> enemy)
+{
+    EBattleResult result = EBattleResult::Progress;
+    system("cls");
+    std::vector<std::string> catArtLines = {
+    R"(          |\---/|       )",
+    R"(          ( o_o )        )",
+    R"(           > ^ <         )"
+    };
+    auto monsterPtr = std::dynamic_pointer_cast<Monster>(enemy); // getAsciiArt()에 접근하기 위한 다운캐스팅
+
+    while (result == EBattleResult::Progress)
+    {
+        BM_Gotoxy(0, 0);
+
+        std::cout << "================= [ 전투 중 ] ===============" << std::endl;
+        std::cout << "                 상대: " << enemy->getName() << "" << std::endl;
+        std::cout << "==============================================" << std::endl << std::endl;
+
+        for (const std::string& line : catArtLines) {
+            std::cout << line << std::endl;
+        }
+ 
+        for (const std::string& line : monsterPtr->getAsciiArt()) {
+            std::cout << "                " << line << std::endl;
+        }
+        
+        BM_Gotoxy(0, 12);
+        std::cout << "------------------------------------------" << std::endl;
+        std::cout << " [ " << player->getName() << " HP: " << player->getCurrentHP() << " ]  VS  ";
+        std::cout << " [ " << enemy->getName() << " HP: " << enemy->getCurrentHP() << " ] " << std::endl;
+        std::cout << "------------------------------------------" << std::endl;
+        std::cout << "  1. 공격하기 | 2. 인벤토리 | 3. 도망가기 | 선택: " << std::endl;
+
+        if (_kbhit())
+        {
+            int input = _getch();
+
+            // 입력값에 따라 ProcessTurn 실행
+            result = ProcessTurn(player, enemy, input);
+
+            // 결과
+            if (result == EBattleResult::PlayerWin) {
+                system("cls");
+                std::cout << "\n\n   승리했습니다! " << enemy->getName() << "을(를) 물리쳤습니다!" << std::endl;
+                // 경험치랑 아이템 드랍 구현 예정
+                Sleep(1500);
+            }
+            else if (result == EBattleResult::EnemyWin) {
+                system("cls");
+                std::cout << "\n\n   You Died..." << std::endl;
+                Sleep(2000);
+            }
+            else if (result == EBattleResult::Escape) {
+                system("cls");
+                std::cout << "\n\n   쫄?  " << std::endl;
+                Sleep(1000);
+            }
+        }
+        Sleep(30);
+    }
+
+}

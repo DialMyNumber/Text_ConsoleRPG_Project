@@ -5,6 +5,7 @@
 #include <random>
 #include <iostream>
 #include <memory>
+#include <windows.h>
 
 class Monster : public Character
 {
@@ -21,11 +22,12 @@ public:
 	// 몬스터는 따로 인벤/돈 관리를 하지않고 단순하게 아이템/돈을 가지고 있고, 죽으면 드랍
 	std::string getItems() const;
 	int getMoney() const;
+	std::vector<std::string> getAsciiArt() const;
 
 protected:
 	std::string items;
 	int money;
-	std::string asciiArt;
+	std::vector<std::string> asciiArt;
 };
 
 
