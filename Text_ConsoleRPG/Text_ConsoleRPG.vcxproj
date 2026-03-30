@@ -133,6 +133,7 @@
     <ClCompile Include="InventoryUI.cpp" />
     <ClCompile Include="ItemBase.cpp" />
     <ClCompile Include="LifeCycle.cpp" />
+    <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Money.cpp" />
     <ClCompile Include="Monster.cpp" />
@@ -152,6 +153,8 @@
     <ClInclude Include="InventoryUI.h" />
     <ClInclude Include="ItemBase.h" />
     <ClInclude Include="LifeCycle.h" />
+    <ClInclude Include="LogMacros.h" />
+    <ClInclude Include="LogManager.h" />
     <ClInclude Include="Money.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Player.h" />
