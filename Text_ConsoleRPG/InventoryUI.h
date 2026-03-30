@@ -1,8 +1,7 @@
 #pragma once
-#include <iostream>
-#include <Windows.h>
-#include <conio.h>
-#include <vector>
+#include <iostream>		// std::cout
+#include <Windows.h>	// SetConsoleCursorPosition
+#include <conio.h>		// _getch
 #include "Inventory.h"
 
 /// <summary>
@@ -21,8 +20,10 @@ public:
 	/// 인벤토리 UI를 화면에 출력하고 사용자 입력을 처리하는 함수
 	/// </summary>
 	/// <param name="inventory">인벤토리</param>
-	static void UpdateInventoryUITick(std::shared_ptr<Inventory> inventory);
+	/// <returns>nullptr : 선택한 아이템 없음</returns>
+	static std::shared_ptr<ItemBase> UpdateInventoryUITick(std::shared_ptr<Inventory> inventory);
 
+private:
 	/// <summary>
 	/// 인벤토리를 출력하는 함수
 	/// </summary>
