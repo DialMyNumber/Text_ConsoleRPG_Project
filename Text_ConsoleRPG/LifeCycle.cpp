@@ -1,4 +1,7 @@
 #include "LifeCycle.h"
+#include "Player.h"     
+#include "BossMonster.h"   
+#include "BattleManager.h"
 #include <iostream>
 #include <conio.h>
 #include <windows.h>
@@ -23,7 +26,8 @@ const vector<string> catFrame2 = {
 
 LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), distance(0)
 {
-    mainPlayer = std::make_unique<Player>("나비", "고양이 기사");
+    mainPlayer = std::make_shared<Player>("나비", "고양이 기사");
+
     shop = std::make_unique<Shop>();
     money = std::make_unique<Money>(1000);
     shopUI = std::make_unique<ShopUI>();
@@ -215,17 +219,36 @@ void LifeCycle::HandleDungeon() { // 플레이어의 이동 거리를 관리하여 배경이 움직
 }
 
 void LifeCycle::HandleBossBattle() { // 향후 보스 몬스터와의 전투 시스템을 구현할 예정입니다. 현재는 전투 준비 화면만 표시합니다.
+
+	static std::shared_ptr<BossMonster> boss = std::make_shared<BossMonster>(); // 보스 몬스터 객체를 생성하여 관리
+
     Gotoxy(0, 0);
-    cout << "==========================================" << endl;
-    cout << "                [ 보스 전투 ]               " << endl;
-    cout << "==========================================" << endl;
-    cout << "  (보스 전투 준비 중...)" << endl << endl;
-    cout << "  [ESC] 마을로 돌아가기" << endl;
-    cout << "==========================================" << endl;
-    if (_kbhit() && _getch() == KEY_ESC) {
-        system("cls");
-        currentState = EGameState::Village;
+
+    BattleManager::DrawBattleScene(mainPlayer, boss);
+
+    // 2. 입력 및 전투 로직 처리
+    if (_kbhit()) {
+        int input = _getch();
+
+        // 전투 매니저가 한 턴을 계산함
+        auto result = BattleManager::ProcessTurn(mainPlayer, boss, input);
+
+        // 3. 결과에 따른 후처리
+        if (result == BattleManager::EBattleResult::PlayerWin) {
+            std::cout << "\n승리했습니다! 마을로 돌아갑니다." << std::endl;
+            boss = std::make_shared<BossMonster>(); // 보스 리셋
+            Sleep(1500); system("cls"); currentState = EGameState::Village;
+        }
+        else if (result == BattleManager::EBattleResult::EnemyWin) {
+            std::cout << "\n패배했습니다... 체력을 회복하고 다시 도전하세요." << std::endl;
+            mainPlayer->setCurrentHP(mainPlayer->getMaxHP()); // 체력 회복
+            Sleep(1500); system("cls"); currentState = EGameState::Village;
+        }
+        else if (result == BattleManager::EBattleResult::Escape) {
+            system("cls"); currentState = EGameState::Village;
+        }
     }
+
 }   
 
 

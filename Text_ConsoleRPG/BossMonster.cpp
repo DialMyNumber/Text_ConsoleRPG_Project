@@ -32,7 +32,7 @@ int BossMonster::determinePhase(int currentHP)
 	return phase;
 }
 
-void BossMonster::attack(Character* enemy)
+void BossMonster::attack(std::shared_ptr<Character> enemy)
 {	
 	int pattern = 0;
 
@@ -189,11 +189,45 @@ void BossMonster::printStatus()
 void BossMonster::death()
 {
 	std::cout << name << "크윽... 내가 지다니...!! 찍...\n";
+<<<<<<< Updated upstream
 	std::cout << name << "를 쓰러뜨렸습니다~!!\n\n";
 	
 	// 전투하면서 올랐던 공격력 수치 초기화.
 	// 만약 보스 죽이고 게임이 아예 끝난다면 이거 필요 없음.
 	ATK = 100;
+=======
+	std::cout << name << "을(를) 쓰러뜨렸습니다~!!\n\n";
+}
+
+void BossMonster::attackPattern4(std::shared_ptr<Character> enemy){
+	std::cout << name << "이(가) 퀴즈 공격을 시전합니다!\n\n";
+	std::cout << name << ": 너처럼 나쁜 아이는 벌을 받아야 한다 찍찍...\n";
+	std::cout << name << ": 하지만 그 전에 너를 평가하겠다 찍찍!\n";
+	std::cout << name << ": 과연 내가 내는 퀴즈를 맞출 수 있을까 찍찍~?!?!?!\n\n";
+
+	int random = rand() % 4 + 1;
+
+	switch (random)
+	{
+	case 1:
+		// quiz #1
+		break;
+	case 2:
+		// quiz #2
+		break;
+	case 3:
+		// quiz #3
+		break;
+	case 4:
+		//quiz #4
+		break;
+	}
+}
+
+void BossMonster::heal()
+{
+	setCurrentHP(getCurrentHP()+100);
+>>>>>>> Stashed changes
 }
 
 // getters

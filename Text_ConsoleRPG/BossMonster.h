@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <memory>	
 #include "Character.h"
 #include "Player.h"
 
@@ -12,7 +12,7 @@ public:
 	BossMonster();
 	// 소멸자 해야하나?
 	
-	void attack(Character* enemy) override;
+	void attack(std::shared_ptr<Character> enemy) override;
 
 	void takeDamage(int amount) override;
 
@@ -20,9 +20,13 @@ public:
 	
 	void death() override;
 
+<<<<<<< Updated upstream
 	void attackPattern4(Player* player);
 
 	void attackPattern4CheckAnswer(Player* player);
+=======
+	void attackPattern4(std::shared_ptr<Character> enemy);
+>>>>>>> Stashed changes
 
 	int determinePhase(int currentHP);
 

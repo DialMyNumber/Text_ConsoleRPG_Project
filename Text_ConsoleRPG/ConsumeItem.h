@@ -9,12 +9,14 @@ class Character;
 // 캐릭터에게 아이템 효과를 적용할 수 있는 경우
 class IApplicablePattern
 {
+public:	
 	// 캐릭터에게 효과를 적용
 	virtual bool ApplyEffect(const std::shared_ptr<Character> character) = 0;
 };
 // 캐릭터로부터 아이템 효과를 제거할 수 있는 경우
 class IReversiblePattern
 {
+public:
 	// 캐릭터로부터 효과를 제거
 	virtual bool RevertEffect(const std::shared_ptr<Character> character) = 0;
 };

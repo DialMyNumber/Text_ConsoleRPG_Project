@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Windows.h"
 #include <iostream>
 
 Character::Character(std::string name) 
@@ -6,7 +7,7 @@ Character::Character(std::string name)
 	this->name = name;
 }
 
-void Character::attack(Character* enemy)
+void Character::attack(std::shared_ptr<Character> enemy)
 {
 	std::cout <<"공격합니다!" << std::endl;
 }
@@ -27,7 +28,7 @@ void Character::takeDamage(int amount) {
 	this->currentHP -= amount; // 현재 체력 차감
 
 	std::cout << name << "이(가) " << amount << "의 피해를 입었습니다!" << std::endl;
-
+	Sleep(500);
 	if (this->currentHP <= 0) {
 		this->currentHP = 0;
 		this->death(); // 체력이 0 이하면 사망 처리 호출

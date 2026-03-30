@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="BossMonster.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ConsumeItem.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="TransactionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleManager.h" />
     <ClInclude Include="BossMonster.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="ConsumeItem.h" />
