@@ -14,15 +14,19 @@ using namespace std;
 
 // 마을 전용 고양이 애니메이션 프레임 (2개)
 const vector<string> catFrame1 = {
-    "    |\\---/|  ",
-    "    ( o_o )  ",
-    "     > ^ <   "
+    "      /\\____/\\        ",
+    "     ( ' W ' ) = > = >",
+    "     ( >              ",
+    "     /     )          ",
+    "     (/---\\)          "
 };
 
 const vector<string> catFrame2 = {
-    "    |\\---/|  ",
-    "    ( >_< )  ", // 눈 깜빡임
-    "     > v <   "  // 입 모양 변경
+    "      /\\____/\\        ",
+    "     ( ' W ' )        ",
+    "     ( >      = > = > ",
+    "     /     )          ",
+    "     (/---\\)          "
 };
 
 LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), distance(0)
@@ -109,45 +113,63 @@ void LifeCycle::Tick() {
 
 // --- 각 상태별 로직 및 렌더링 ---
 
-void LifeCycle::HandleVillage() { // 마을 메뉴와 고양이 애니메이션을 함께 출력합니다.
+void LifeCycle::HandleVillage() {
+    // 1. 상단 타이틀 (특수 기호 제거)
     Gotoxy(0, 0);
-    cout << "===================================" << endl;
-    cout << "          [ 평화로운 1조 ]          " << endl;
-    cout << "===================================" << endl;
-    cout << "  1. 상점 방문" << endl;
-    cout << "  2. 인벤토리 확인" << endl;
-    cout << "  3. 던전 입장 (성장)" << endl;
-    cout << "  4. 보스 레이드 도전" << endl;
-    cout << "  5. 게임 종료" << endl;
+    cout << "================================================================================" << endl;
+    Gotoxy(26, 1);
+    cout << "--- [ 마을 : 평화로운 1조 ] ---" << endl;
+    Gotoxy(0, 2);
+    cout << "================================================================================" << endl;
 
+    // 2. 좌측 고양이 출력 (500ms마다 프레임 전환)
     static int frameCount = 0;
-    static ULONGLONG lastTime = GetTickCount64(); // 마지막으로 프레임이 바뀐 시간
-
+    static ULONGLONG lastTime = GetTickCount64();
     ULONGLONG currentTime = GetTickCount64();
 
-    // 500ms(0.5초)마다 프레임 전환
-    if (currentTime - lastTime > 500) {
-        frameCount = (frameCount + 1) % 2; // 0, 1을 번갈아 가며 출력
+    if (currentTime - lastTime > 100) {
+        frameCount = (frameCount + 1) % 2;
         lastTime = currentTime;
     }
 
-    // 현재 프레임에 맞는 고양이 출력
     const vector<string>& currentCat = (frameCount == 0) ? catFrame1 : catFrame2;
 
-    // 메뉴 아래 적절한 위치에 출력
-    Gotoxy(0, 9);
-    for (const string& line : currentCat) {
-        cout << "         " << line << endl; // 공백으로 중앙 정렬 효과
+    int catX = 8;
+    int catY = 7;
+    // 고양이는 하늘색으로 출력 (색상 코드 11)
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+    for (size_t i = 0; i < currentCat.size(); ++i) {
+        Gotoxy(catX, catY + (int)i);
+        cout << currentCat[i];
     }
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7); // 흰색 복구
 
-    mainPlayer->printStatus(); // 플레이어 상태 출력
+    int infoX = 45;
+    int infoY = 5;
 
-    cout << "  선택: ";
+    Gotoxy(infoX, infoY);     cout << "* STATUS *";
+    Gotoxy(infoX, infoY + 2); cout << "NAME   : " << mainPlayer->getName();
+    Gotoxy(infoX, infoY + 3); cout << "LEVEL  : " << mainPlayer->getLevel();
+    Gotoxy(infoX, infoY + 4); cout << "HEALTH : " << mainPlayer->getCurrentHP();
+    Gotoxy(infoX, infoY + 5); cout << "GOLD   : " << money->getCurrentMoney() << " G";
+	Gotoxy(infoX, infoY + 6); cout << "EXP    : " << mainPlayer->getExp() << " EXP";
 
 
+    int menuY = infoY + 9;
+    Gotoxy(infoX, menuY);     cout << "* ACTIONS *";
+    Gotoxy(infoX, menuY + 2); cout << "1. 상점";
+    Gotoxy(infoX, menuY + 3); cout << "2. 인벤토리";
+    Gotoxy(infoX, menuY + 4); cout << "3. 던전";
+    Gotoxy(infoX, menuY + 5); cout << "4. 보스전";
+    Gotoxy(infoX, menuY + 6); cout << "5. EXIT GAME";
+
+    Gotoxy(infoX, menuY + 8);
+    cout << "SELECT > ";
+
+    // 4. 입력 처리
     if (_kbhit()) {
         int input = _getch();
-        system("cls"); // 화면 전환 시 클리어
+        system("cls");
         switch (input) {
         case '1': currentState = EGameState::Shop; break;
         case '2': currentState = EGameState::Inventory; break;
@@ -176,28 +198,24 @@ void LifeCycle::HandleShop()
 
 void LifeCycle::HandleInventory() { // 플레이어의 인벤토리 정보를 받아서 아이템 목록을 보여주는 기능을 구현할 예정입니다.
     Gotoxy(0, 0);
+    //cout << "==========================================" << endl;
+    //cout << "                [ 인벤토리 ]               " << endl;
+    //cout << "==========================================" << endl;
+    //cout << "  (아이템 목록 준비 중...)" << endl << endl;
+    //cout << "  [ESC] 마을로 돌아가기" << endl;
+    //cout << "==========================================" << endl;
+
     // 플레이어의 인벤토리에 대하여 null값 확인
     if (mainPlayer->GetInventory() != nullptr)
     {
         // 플레이어 인벤토리의 UI 출력
-        std::shared_ptr<ItemBase> selectedItem = InventoryUI::UpdateInventoryUITick(mainPlayer->GetInventory());
-
-        // 선택된 아이템 nullptr 검사
-        if (selectedItem != nullptr)
-        {
-            // 선택한 아이템이 사용 가능한 타입인지 확인
-            if (std::shared_ptr<IApplicablePattern> usableItem = dynamic_pointer_cast<IApplicablePattern>(selectedItem))
-            {
-                // 인벤토리에서 해당 아이템 1개 제거
-                if (mainPlayer->GetInventory()->RemoveItem(selectedItem) == true)
-                {
-                    // 효과 적용
-                    usableItem->ApplyEffect(this->mainPlayer);
-                }
-            }
-        }
+        InventoryUI::UpdateInventoryUITick(mainPlayer->GetInventory());
     }
 
+    //if (_kbhit() && _getch() == KEY_ESC) {
+    //    system("cls");
+    //    currentState = EGameState::Village;
+    //}
     system("cls");
     currentState = EGameState::Village;
 }
