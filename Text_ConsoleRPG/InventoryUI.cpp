@@ -16,7 +16,7 @@ void SetTextCursorLocation(uint32_t x, uint32_t y)
 /// 인벤토리 UI를 화면에 출력하고 사용자 입력을 처리하는 함수
 /// </summary>
 /// <param name="inventory">인벤토리</param>
-void InventoryUI::UpdateInventoryUITick(std::shared_ptr<Inventory> inventory)
+std::shared_ptr<ItemBase> InventoryUI::UpdateInventoryUITick(std::shared_ptr<Inventory> inventory)
 {
 	// Inventory UI 최초 출력 시 Index 인디케이터는 0으로 초기화
 	size_t selectedIndex = 0;
@@ -39,23 +39,17 @@ void InventoryUI::UpdateInventoryUITick(std::shared_ptr<Inventory> inventory)
 			{
 				if (selectedIndex == 0)
 				{
-					std::shared_ptr<ItemBase> item = (*it).first;
-					// 아이템 제거 및 메뉴 나가기
-					if (inventory->RemoveItem(item, 1) == true)
-					{
-						// BattleManager에서 아이템 효과 적용 시도
-						return;
-					}
+					// 아이템 반환
+					return (*it).first;
 				}
 				--selectedIndex;
 			}
-
 			// 아이템 제거 실패 시 인벤토리 UI 화면 유지
 		}
 		if (inputKey == 27)	// ESC
 		{
 			// 메뉴 나가기
-			return;
+			break;
 		}
 		if (inputKey == 72)	// UP Key
 		{
@@ -65,9 +59,9 @@ void InventoryUI::UpdateInventoryUITick(std::shared_ptr<Inventory> inventory)
 		{
 			++selectedIndex;
 		}
-
 #pragma endregion
 	}
+	return nullptr;
 }
 
 /// <summary>
@@ -140,7 +134,7 @@ void InventoryUI::ShowItemList(std::shared_ptr<Inventory> inventory, size_t sele
 	// 입력 안내 문구 출력
 	std::cout << "[▲ / ▼ 방향키] : 커서 이동" << std::endl;
 	std::cout << "[Enter 키] : 아이템 사용" << std::endl;
-	std::cout << "[▶ 키] : 아이템 설명 보기" << std::endl;
+	std::cout << "[Esc 키] : 인벤토리 닫기" << std::endl;
 
 	// 상단에 메뉴 이름 출력
 	SetTextCursorLocation((maxLength / 2) - 5, 0);
