@@ -1,12 +1,13 @@
 #include "EquipItem.h"
 
-EquipItem::EquipItem(const std::string& name, int atk, int def, int buyCost)
+EquipItem::EquipItem(const std::string& name, int atk, int def, int buyPrice, int sellPrice)
 {
     itemType = EItemType::Equip;
     itemName = name;
     additionalAttack = atk;
-    additionalDefense = def;
-    this->buyCost = buyCost;
+    additionalHP = def;
+    buyCost = buyPrice;
+    sellCost = sellPrice;
 }
 
 void EquipItem::Equip(Character& target)
@@ -19,7 +20,7 @@ void EquipItem::Equip(Character& target)
 
     std::cout << "아이템(" << itemName << ") 장착\n";
     target.setATK(target.getATK() + additionalAttack);
-    target.setMaxHP(target.getMaxHP() + additionalDefense);
+    target.setMaxHP(target.getMaxHP() + additionalHP);
     isEquipped = true;
 }
 
@@ -33,6 +34,6 @@ void EquipItem::UnEquip(Character& target)
 
     std::cout << "아이템(" << itemName << ") 장착해제\n";
     target.setATK(target.getATK() - additionalAttack);
-    target.setMaxHP(target.getMaxHP() - additionalDefense);
+    target.setMaxHP(target.getMaxHP() - additionalHP);
     isEquipped = false;
 }

@@ -48,6 +48,7 @@ LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), dis
             "³°°í ³ì½¼ °Ë",
             50,
             50,
+            200,
             100
         );
 

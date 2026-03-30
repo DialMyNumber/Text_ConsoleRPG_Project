@@ -8,13 +8,13 @@ class EquipItem : public ItemBase
 {
 private:
 	int additionalAttack = 0;
-	int additionalDefense = 0;
+	int additionalHP = 0;
 	bool isEquipped = false;
 
 public:
 	EquipItem() {}
 
-	EquipItem(const std::string& name, int atk, int def, int buyCost);
+	EquipItem(const std::string& name, int atk, int def, int buyCost, int sellCost);
 
 	void Equip(Character& target);
 
