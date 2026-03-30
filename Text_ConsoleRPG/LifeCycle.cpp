@@ -32,8 +32,6 @@ LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), dis
     money = std::make_unique<Money>(1000);
     shopUI = std::make_unique<ShopUI>();
 
-    testInventory = std::make_shared<Inventory>(5);
-
     auto potion = std::make_shared<ItemBase>(
         EItemType::Consume,
         "포션",
@@ -48,10 +46,6 @@ LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), dis
         25,
         50
     );
-
-    testInventory->AddItem(potion, 99);
-    testInventory->AddItem(sword, 1);
-
 
     shop->addStock(potion, 10);
     shop->addStock(sword, 1);
@@ -174,10 +168,12 @@ void LifeCycle::HandleInventory() { // 플레이어의 인벤토리 정보를 받아서 아이템 
     //cout << "  (아이템 목록 준비 중...)" << endl << endl;
     //cout << "  [ESC] 마을로 돌아가기" << endl;
     //cout << "==========================================" << endl;
-    if (testInventory != nullptr)
+
+    // 플레이어의 인벤토리에 대하여 null값 확인
+    if (mainPlayer->GetInventory() != nullptr)
     {
-        //testInventory->PrintInventory();
-        InventoryUI::UpdateInventoryUITick(testInventory);
+        // 플레이어 인벤토리의 UI 출력
+        InventoryUI::UpdateInventoryUITick(mainPlayer->GetInventory());
     }
 
     //if (_kbhit() && _getch() == KEY_ESC) {

@@ -4,7 +4,7 @@
 
 
 // 부모 생성자 Character(name)을 호출하여 이름을 초기화합니다.
-Player::Player(std::string name, std::string job) : Character(name), inventory(10), money(1000)
+Player::Player(std::string name, std::string job) : Character(name), money(1000)
 {
     this->job = job;
     this->level = 1;      // 기본값 초기화
@@ -14,7 +14,8 @@ Player::Player(std::string name, std::string job) : Character(name), inventory(1
     this->exp = 0;
     this->speed = 5;
 
-
+    // 인벤토리 생성
+    inventory = std::make_shared<Inventory>(10);
 }
 
 bool Player::BuyItem(std::shared_ptr<ItemBase> item, size_t amount)
@@ -28,14 +29,14 @@ bool Player::BuyItem(std::shared_ptr<ItemBase> item, size_t amount)
     }
 
     // 2. 인벤토리에 공간이 있는가?
-    if (inventory.GetAcceptableAmount(item) < amount) {
+    if (inventory->GetAcceptableAmount(item) < amount) {
         std::cout << "인벤토리에 공간이 부족합니다!" << std::endl;
         return false;
     }
 
     // 3. 결제 및 아이템 추가
     money.spendMoney(totalCost); // 돈 차감
-    inventory.AddItem(item, amount); // 아이템 추가
+    inventory->AddItem(item, amount); // 아이템 추가
 
     std::cout << item->itemName << " " << amount << "개를 구매했습니다." << std::endl;
     return true;

@@ -131,8 +131,8 @@ BattleManager::EBattleResult BattleManager::ProcessTurn(std::shared_ptr<Player> 
     }
     else if(actionInput == '2') 
     {
-		auto& inv = player->GetInventory();
-		auto& container = inv.container; // 인벤토리 컨테이너 참조
+		auto inv = player->GetInventory();
+		auto& container = inv->container; // 인벤토리 컨테이너 참조
 
         if(container.empty()) {
             std::cout << "인벤토리가 비어 있습니다!" << std::endl;
@@ -177,7 +177,7 @@ BattleManager::EBattleResult BattleManager::ProcessTurn(std::shared_ptr<Player> 
             // 2. 아이템 효과 적용 (player는 shared_ptr이므로 그대로 전달)
             if (selectedItem->ApplyEffect(player)) {
                 // 3. 사용 성공 시 인벤토리에서 제거
-                inv.RemoveItem(itemKey, 1);
+                inv->RemoveItem(itemKey, 1);
 
                 std::cout << "\n아이템을 사용했습니다! 다음은 적의 턴입니다." << std::endl;
                 Sleep(1000);
