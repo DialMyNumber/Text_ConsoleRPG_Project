@@ -16,11 +16,15 @@ public:
 
     // 부모의 기능을 확장하고 싶다면 printStatus도 재정의할 수 있습니다.
     virtual void printStatus() override;
+	virtual void takeDamage(int amount) override; // 데미지를 입는 함수도 재정의
 
     std::shared_ptr<Inventory> GetInventory() { return inventory; }; // 플레이어의 인벤토리
 	Money& GetMoney() { return money; }; // 플레이어의 돈
 
-	bool BuyItem(std::shared_ptr<ItemBase> item, size_t amount);    
+	bool BuyItem(std::shared_ptr<ItemBase> item, size_t amount);  
+
+    void addExp(int amount); // 경험치 획득 함수
+    void levelUp();          // 레벨업 처리 함수
     
 
 private:

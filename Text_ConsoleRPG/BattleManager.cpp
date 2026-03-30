@@ -3,6 +3,7 @@
 #include "BossMonster.h"
 #include "Monster.h"
 #include "ConsumeItem.h"
+#include "InventoryUI.h"
 #include <iostream>
 #include <windows.h>
 #include <vector>
@@ -96,9 +97,9 @@ void BattleManager::DrawBattleScene(std::shared_ptr<Player> player, std::shared_
 
     // 두 번째 줄: HP 상태 출력
     BM_Gotoxy(2, statusY + 2);
-    std::cout << "HP : " << player->getCurrentHP() << " / " << player->getMaxHP();
+    std::cout << "HP : " << player->getCurrentHP() << " / " << player->getMaxHP() << "    ";
     BM_Gotoxy(40, statusY + 2);
-    std::cout << "| HP : " << enemy->getCurrentHP() << " / " << enemy->getMaxHP();
+    std::cout << "| HP : " << enemy->getCurrentHP() << " / " << enemy->getMaxHP() << "    ";
 
     // 세 번째 줄: 공격력 및 스피드 출력
     BM_Gotoxy(2, statusY + 3);
@@ -131,68 +132,50 @@ BattleManager::EBattleResult BattleManager::ProcessTurn(std::shared_ptr<Player> 
     }
     else if(actionInput == '2') 
     {
-		auto inv = player->GetInventory();
-		auto& container = inv->container; // 인벤토리 컨테이너 참조
+		system("cls");
 
-        if(container.empty()) {
-            std::cout << "인벤토리가 비어 있습니다!" << std::endl;
-            Sleep(1000);
-            return EBattleResult::Progress; // 인벤토리가 비어있으면 아무 행동도 하지 않고 전투 계속
-		}
+        // 인벤토리 UI 업데이트 및 아이템 사용 처리
+        auto selectedItem = InventoryUI::UpdateInventoryUITick(player->GetInventory());
 
-		std::vector<std::shared_ptr<ConsumeItem>> consumeList; // 아이템 목록을 벡터로 변환
-		std::vector<std::shared_ptr<ItemBase>> originalKeys; // 인벤토리 아이템 목록
+        // 2. 아이템을 선택하고 Enter를 눌렀을 경우 (ESC가 아닐 때)
+        if (selectedItem != nullptr)
+        {
+            // 3. 소비 아이템인지 확인 (다운캐스팅)
+			auto consumeItem = std::dynamic_pointer_cast<ConsumeItem>(selectedItem); // 다운캐스팅 시도 (소비 아이템이 아니면 nullptr 반환)
 
-		std::cout << "\n[ 사용할 아이템 선택 ]" << std::endl;
-		int idx = 1;
-        for (auto& pair : container) {
-			// ItemBase 포인터를 ConsumeItem 포인터로 다운캐스팅 시도
-			auto consumeItem = std::dynamic_pointer_cast<ConsumeItem>(pair.first);
-            if(consumeItem) { // 다운캐스팅이 성공한 경우에만 아이템 목록에 추가
-                std::cout << idx << ". " << consumeItem->itemName
-                    << " (보유: " << pair.second << "개)" << std::endl;
-                consumeList.push_back(consumeItem); // ConsumeItem 목록에 추가
-                originalKeys.push_back(pair.first); // 원래 ItemBase 포인터도 저장
-                idx++;
-			}
-		}
+            if (consumeItem)
+            {
+                system("cls"); // 효과 로그 출력을 위해 화면 정리
 
-        if(consumeList.empty()) {
-            std::cout << "사용할 수 있는 소비 아이템이 없습니다!" << std::endl;
-            Sleep(1000);
-            return EBattleResult::Progress; // 사용할 수 있는 소비 아이템이 없으면 전투 계속
-		}
+                // 4. 아이템 효과 적용 (player는 shared_ptr<Player>이므로 Character* 타입에 자동 호환됩니다.)
+                if (consumeItem->ApplyEffect(player))
+                {
+                    // 5. 사용 성공 시 인벤토리에서 실제 제거 (1개 차감)
+                    player->GetInventory()->RemoveItem(selectedItem, 1);
 
-        std::cout << "0. 취소" << std::endl;
-        std::cout << "선택: ";
+                    std::cout << "\n아이템을 사용했습니다! 적의 공격이 시작됩니다." << std::endl;
+                    Sleep(1000);
 
-        // 입력 받기
-        int choice;
-        std::cin >> choice;
+                    // 6. 아이템 사용도 턴을 소모하므로 적이 반격합니다.
+                    std::cout << "\n--- 적의 턴 ---" << std::endl;
+                    enemy->attack(player);
 
-        if (choice > 0 && choice <= (int)consumeList.size()) {
-            auto selectedItem = consumeList[choice - 1];
-            auto itemKey = originalKeys[choice - 1];
-
-            // 2. 아이템 효과 적용 (player는 shared_ptr이므로 그대로 전달)
-            if (selectedItem->ApplyEffect(player)) {
-                // 3. 사용 성공 시 인벤토리에서 제거
-                inv->RemoveItem(itemKey, 1);
-
-                std::cout << "\n아이템을 사용했습니다! 다음은 적의 턴입니다." << std::endl;
+                    if (player->getCurrentHP() <= 0) return EBattleResult::EnemyWin;
+                }
+            }
+            else
+            {
+                system("cls");
+                std::cout << "\n[알림] 장비 아이템은 전투 중에 사용할 수 없습니다!" << std::endl;
                 Sleep(1000);
-
-                // 4. 아이템 사용도 턴을 소모하므로 적이 공격함
-                std::cout << "\n--- 적의 턴 ---" << std::endl;
-                enemy->attack(player);
-                if (player->getCurrentHP() <= 0) return EBattleResult::EnemyWin;
             }
         }
-        else {
-            std::cout << "사용을 취소했습니다." << std::endl;
-            Sleep(500);
-        }
+
+        // 전투 화면으로 복귀하기 전 화면 정리
+        system("cls");
+        return EBattleResult::Progress;
 	}
+
     else if (actionInput == '3') 
     {
         return EBattleResult::Escape; //도망 

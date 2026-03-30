@@ -47,12 +47,21 @@ void Player::attack(std::shared_ptr<Character> enemy)
     // 여기에 플레이어만의 공격 로직 구현 (나중에 Enemy의 takeDamage 호출 등)
     if (enemy == nullptr) return;
 
-    std::cout << "[플레이어] " << this->name << "의 맹렬한 공격!" << std::endl;
-
+    bool isCritical = (rand() % 100) < 20; // 20% 확률로 크리티컬 히트
+    int finalDamage = isCritical ? this->ATK * 2 : this->ATK;
+    if (isCritical)
+    {
+        // 시각적 연출: 강렬한 문구 출력
+        std::cout << "[!! CRITICAL HIT !!]" << std::endl;
+        std::cout << "[플레이어] " << this->name << "의 치명적인 일격!" << std::endl;
+    }
+    else {
+        std::cout << "[플레이어] " << this->name << "의 맹렬한 공격!" << std::endl;
+    }   
 	Sleep(500); // 공격 모션을 표현하기 위한 딜레이 (500ms)
 
     // 플레이어의 공격력(ATK)을 적의 takeDamage로 전달
-    enemy->takeDamage(this->ATK);
+    enemy->takeDamage(finalDamage);
 }
 
 void Player::printStatus()
@@ -62,4 +71,44 @@ void Player::printStatus()
     // 부모 클래스의 printStatus 내용을 그대로 사용하고 싶다면 아래처럼 호출 가능합니다.
     Character::printStatus();
     std::cout << "===================================" << std::endl;
+}
+
+void Player::addExp(int amount) {
+    this->exp += amount;
+    std::cout << amount << "의 경험치를 획득했습니다! (현재: " << exp << ")" << std::endl;
+
+    // 레벨업 조건: 현재 레벨 * 100 이상의 경험치 필요
+    if (this->exp >= this->level * 100) {
+        levelUp();
+    }
+	Sleep(500); // 경험치 획득 모션을 표현하기 위한 딜레이 (500ms)
+}
+
+void Player::levelUp() {
+    this->exp -= (this->level * 100);
+    this->level++; //
+
+    // 성장 수치 적용
+    this->maxHP += 20;
+    this->currentHP = this->maxHP; // 레벨업 시 체력 풀회복은 국룰이죠!
+    this->ATK += 5;
+    this->speed += 2;
+
+    std::cout << "\n LEVEL UP!" << std::endl;
+    std::cout << "레벨이 " << level << "이(가) 되었습니다! 모든 능력치가 상승합니다." << std::endl;
+    Sleep(1000);
+}
+
+void Player::takeDamage(int amount) {
+    // 회피 확률 계산 (예: 속도 1당 0.5% 확률, 최대 30%)
+    int dodgeChance = (this->speed > 60) ? 30 : this->speed / 2;
+
+    if ((rand() % 100) < dodgeChance) {
+        std::cout << "\n 휘릭! " << name << "이(가) 공격을 가볍게 피했습니다!" << std::endl;
+        Sleep(500);
+        return; // 데미지를 입지 않고 함수 종료
+    }
+
+    // 회피 실패 시 부모 클래스의 기본 데미지 로직 실행
+    Character::takeDamage(amount);
 }

@@ -102,7 +102,7 @@ void LifeCycle::HandleVillage() { // ¸¶À» ¸Þ´º¿Í °í¾çÀÌ ¾Ö´Ï¸ÞÀÌ¼ÇÀ» ÇÔ²² Ãâ·ÂÇÕ
     cout << "===================================" << endl;
     cout << "  1. »óÁ¡ ¹æ¹®" << endl;
     cout << "  2. ÀÎº¥Åä¸® È®ÀÎ" << endl;
-    cout << "  3. ´øÀü ÀÔÀå (ÀÌµ¿ ¿¬½À)" << endl;
+    cout << "  3. ´øÀü ÀÔÀå (¼ºÀå)" << endl;
     cout << "  4. º¸½º ·¹ÀÌµå µµÀü" << endl;
     cout << "  5. °ÔÀÓ Á¾·á" << endl;
 
@@ -237,6 +237,7 @@ void LifeCycle::HandleBossBattle() { // ÇâÈÄ º¸½º ¸ó½ºÅÍ¿ÍÀÇ ÀüÅõ ½Ã½ºÅÛÀ» ±¸ÇöÇ
         }
         else if (result == BattleManager::EBattleResult::EnemyWin) {
             std::cout << "\nÆÐ¹èÇß½À´Ï´Ù... Ã¼·ÂÀ» È¸º¹ÇÏ°í ´Ù½Ã µµÀüÇÏ¼¼¿ä." << std::endl;
+			mainPlayer->death(); // »ç¸Á Ã³¸® (¹®±¸ Ãâ·Â)
             mainPlayer->setCurrentHP(mainPlayer->getMaxHP()); // Ã¼·Â È¸º¹
             Sleep(1500); system("cls"); currentState = EGameState::Village;
         }
