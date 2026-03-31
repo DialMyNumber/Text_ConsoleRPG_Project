@@ -4,17 +4,17 @@
 
 #include "BossMonster.h"
 #include "Player.h"
-#include "Windows.h"
+#include "windows.h"
 
 BossMonster::BossMonster() :Character("[초대형 울트라 찍찍 들쥐]")
 {
 	// 모든 수치는 공유 후 조율할 예정
-	maxHP = 1000;
+	maxHP = 4885;
 	currentHP = maxHP;
-	level = 100;
-	ATK = 10;
-	exp = 100;
-	speed = 100;
+	level = 17;
+	ATK = 26;
+	exp = 1000;
+	speed = 60;
 }
 
 int BossMonster::determinePhase(int currentHP)
@@ -37,7 +37,7 @@ int BossMonster::determinePhase(int currentHP)
 
 void BossMonster::attack(std::shared_ptr<Character> enemy)
 {
-	srand(time(NULL));
+	srand(time(NULL)); // 랜덤 시드 생성
 
 	int pattern = 0;
 
@@ -75,21 +75,12 @@ void BossMonster::attack(std::shared_ptr<Character> enemy)
 		enemy->takeDamage(ATK * 1.7);
 		break;
 	case 4:
-	{   // [수정] 중괄호 추가로 변수 범위 제한 (빌드 에러 해결)
-		// [수정] shared_ptr 전용 캐스팅 사용
-		auto player = std::dynamic_pointer_cast<Player>(enemy);
-		if (player != nullptr)
-		{
-			attackPattern4(enemy);
-		}
-		else
-		{
-			std::cout << "오류: enemy가 Player 타입이 아닙니다.\n";
-		}
+	{   
+		attackPattern4(enemy);
 		break;
 	}
 	case 5:
-		std::cout << name << "가 메가 [썩은 치즈]를 먹었습니다!\n";
+		std::cout << name << "가 [썩은 치즈]를 먹었습니다!\n";
 		setCurrentHP(getCurrentHP() + 250);
 		std::cout << name << "의 체력이 250 회복되었습니다.\n\n";
 		break;
@@ -101,8 +92,8 @@ void BossMonster::attack(std::shared_ptr<Character> enemy)
 		break;
 	case 7:
 		std::cout << name << "가 [들쥐의 분노]를 시전했습니다!";
-		ATK += 10; // 수치 추후 조율
-		std::cout << name << "의 공격력이 추가로 10 올랐습니다!\n\n";
+		ATK += 16; // 수치 추후 조율
+		std::cout << name << "의 공격력이 추가로 6 올랐습니다!\n\n";
 		break;
 	default:
 		std::cout << "공격 패턴 출력 과정에서 오류 발생\n";
@@ -170,15 +161,35 @@ void BossMonster::attackPattern4(std::shared_ptr<Character> enemy)
 	{
 		std::cout << name << ": 정답을 맞추다니...!! 이거 실화냐 찍찍~~??\n\n";
 		std::cout << enemy->getName() << "은 혼란을 틈타 " << name << "를 공격했습니다.\n";
-		takeDamage(enemy->getATK());
+		takeDamage(enemy->getATK() * 0.6);
+		std::cout << '\n' << enemy->getName() << "은 자신감을 얻어 체력을 [8] 회복했습니다.\n";
+		enemy->setCurrentHP(enemy->getCurrentHP() + 8);
 	}
 }
 
 void BossMonster::takeDamage(int amount)
 {
-	currentHP -= amount;
+	//speed의 절반이 회피 확률, 최댓값은 30
+	int dodgeChance = (speed > 60) ? 30 : speed / 2;
 
-	std::cout << name << "에게 " << amount << "의 피해를 입혔습니다!\n";
+	if (isInvincible == true)
+	{
+		std::cout << name << "는 [시궁창의 축복] 효과로 인해 피해를 입지 않았습니다!\n";
+		std::cout << "우하하, 이 정도 공격은 통하지 않는다 찍찍~!\n\n";
+		isInvincible = false;
+	}
+	else if ((rand() % 100 < dodgeChance))
+	{
+		std::cout << "\n 휘릭! " << name << "가 공격을 가볍게 피했습니다!" << std::endl;
+		Sleep(500);
+		return;
+	}
+	else
+	{
+		currentHP -= amount;
+		std::cout << name << "에게 " << amount << "의 피해를 입혔습니다!\n";
+	}
+	
 
 	if (currentHP <= 0) {
 		currentHP = 0;
@@ -207,14 +218,6 @@ void BossMonster::death()
 bool BossMonster::getIsInvincible()
 {
 	return isInvincible;
-}
-int BossMonster::getPhase()
-{
-	return phase;
-}
-int BossMonster::getCorrectAnswer()
-{
-	return correctAnswer;
 }
 
 // setters

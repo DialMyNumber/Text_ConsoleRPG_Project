@@ -26,8 +26,6 @@ public:
 	int determinePhase(int currentHP);
 
 	// getters
-	int getCorrectAnswer();
-	int getPhase();
 	bool getIsInvincible();
 
 	// setters
