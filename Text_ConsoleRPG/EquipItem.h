@@ -2,9 +2,8 @@
 
 #include <iostream>
 #include "ItemBase.h"
-#include "Character.h"
 
-class EquipItem : public ItemBase
+class EquipItem : public ItemBase, public IApplicablePattern, public IReversiblePattern
 {
 private:
 	int additionalAttack = 0;
@@ -16,11 +15,15 @@ public:
 
 	EquipItem(const std::string& name, int atk, int HP, int buyCost, int sellCost);
 
-	void Equip(Character& target);
-
-	void UnEquip(Character& target);
+	virtual ~EquipItem();
 
 	bool isCharacterEquipped() const {
 		return isEquipped;
 	}
+
+	// IApplicablePattern을(를) 통해 상속됨
+	bool ApplyEffect(const std::shared_ptr<Character> character) override;
+
+	// IReversiblePattern을(를) 통해 상속됨
+	bool RevertEffect(const std::shared_ptr<Character> character) override;
 };

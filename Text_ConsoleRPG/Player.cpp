@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <iostream>
 #include <windows.h>
+#include "EquipItem.h"
 
 
 // 부모 생성자 Character(name)을 호출하여 이름을 초기화합니다.
@@ -18,6 +19,11 @@ Player::Player(std::string name, std::string job) : Character(name)
 
     inventory = std::make_shared<Inventory>(10);
     money = std::make_shared<Money>(1000);
+}
+
+Player::~Player()
+{
+    std::cout << "Player 소멸자 호출 완료" << std::endl;
 }
 
 bool Player::BuyItem(std::shared_ptr<ItemBase> item, size_t amount)
@@ -145,5 +151,23 @@ void Player::addMoney(int amount)
     this->money->addMoney(amount); // 돈 추가
     std::cout << amount << "골드를 획득했습니다! (현재: " << this->money->getCurrentMoney() << ")" << std::endl;
     Sleep(1000);
+}
+
+// 플레이어가 임의 장비 아이템을 착용하는 함수
+void Player::SetEquipItem(std::shared_ptr<ItemBase> equipItem)
+{
+    if (this->equipItem != nullptr)
+    {
+        // 기존에 장착중인 아이템이 존재할 때,
+        if (auto equipment = std::dynamic_pointer_cast<EquipItem>(this->equipItem))
+        {
+            // 장착중인 아이템의 효과를 제거
+            std::shared_ptr<Character> ptrThis(this);
+            equipment->RevertEffect(ptrThis);
+        }
+    }
+    
+    // 장착중인 아이템 설정
+    this->equipItem = equipItem;
 }
 

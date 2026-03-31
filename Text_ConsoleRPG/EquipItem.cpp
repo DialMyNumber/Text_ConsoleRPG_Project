@@ -1,4 +1,6 @@
 #include "EquipItem.h"
+#include "LogMacros.h"
+#include "Player.h"
 
 EquipItem::EquipItem(const std::string& name, int atk, int HP, int buyPrice, int sellPrice)
 {
@@ -10,30 +12,58 @@ EquipItem::EquipItem(const std::string& name, int atk, int HP, int buyPrice, int
     sellCost = sellPrice;
 }
 
-void EquipItem::Equip(Character& target)
+EquipItem::~EquipItem()
+{
+    std::cout << "EquipItem 소멸사 호출됨" << std::endl;
+}
+
+bool EquipItem::ApplyEffect(const std::shared_ptr<Character> character)
 {
     if (isEquipped)
     {
-        std::cout << "이미 장착한 아이템입니다: " << itemName << std::endl;
-        return;
+        LOG_INFO("#EquipItem : 이미 장착된 아이템입니다.");
+        return false;
     }
 
-    std::cout << "아이템(" << itemName << ") 장착\n";
-    target.setATK(target.getATK() + additionalAttack);
-    target.setMaxHP(target.getMaxHP() + additionalHP);
-    isEquipped = true;
+    // 캐릭터 nullptr 방어
+    if (character != nullptr)
+    {
+        // 적용 캐릭터의 타입 Player 확인
+        if (auto player = std::dynamic_pointer_cast<Player>(character))
+        {
+            LOG_INFO("#EquipItem : 아이템(" + itemName + ") 장착");
+            player->setATK(player->getATK() + additionalAttack);
+            player->setMaxHP(player->getMaxHP() + additionalHP);
+            isEquipped = true;
+
+            std::shared_ptr<ItemBase> ptrThis(this);
+            player->SetEquipItem(ptrThis);
+            return true;
+        }
+    }
+    return false;
 }
 
-void EquipItem::UnEquip(Character& target)
+bool EquipItem::RevertEffect(const std::shared_ptr<Character> character)
 {
     if (!isEquipped)
     {
-        std::cout << "아이템을 장착하고있지 않습니다: " << itemName << std::endl;
-        return;
+        LOG_INFO("#EquipItem : 장착되지 않은 아이템입니다.");
+        return false;
     }
 
-    std::cout << "아이템(" << itemName << ") 장착해제\n";
-    target.setATK(target.getATK() - additionalAttack);
-    target.setMaxHP(target.getMaxHP() - additionalHP);
-    isEquipped = false;
+    // 캐릭터 nullptr 방어
+    if (character != nullptr)
+    {
+        // 적용 캐릭터의 타입 Player 확인
+        if (auto player = std::dynamic_pointer_cast<Player>(character))
+        {
+            LOG_INFO("#EquipItem : 아이템(" + itemName + ") 장착해제");
+            player->setATK(player->getATK() - additionalAttack);
+            player->setMaxHP(player->getMaxHP() - additionalHP);
+            isEquipped = false;
+            return true;
+        }
+    }
+    return false;
 }
