@@ -9,7 +9,7 @@
 BossMonster::BossMonster() :Character("[초대형 울트라 찍찍 들쥐]")
 {
 	// 모든 수치는 공유 후 조율할 예정
-	maxHP = 4885;
+	maxHP = 999;
 	currentHP = maxHP;
 	level = 17;
 	ATK = 26;
@@ -40,6 +40,7 @@ void BossMonster::attack(std::shared_ptr<Character> enemy)
 	srand(time(NULL)); // 랜덤 시드 생성
 
 	int pattern = 0;
+	bool cheatMode = false;
 
 	isInvincible = false;
 
@@ -81,8 +82,25 @@ void BossMonster::attack(std::shared_ptr<Character> enemy)
 	}
 	case 5:
 		std::cout << name << "가 [썩은 치즈]를 먹었습니다!\n";
-		setCurrentHP(getCurrentHP() + 250);
-		std::cout << name << "의 체력이 250 회복되었습니다.\n\n";
+		if (cheatMode = false)
+		{
+			currentHP += 250;
+			if (currentHP > maxHP)
+			{
+				currentHP = maxHP;
+			}
+			std::cout << name << "의 체력이 250 회복되었습니다.\n\n";
+		}
+		else
+		{
+			currentHP += 2;
+			if (currentHP > maxHP)
+			{
+				currentHP = maxHP;
+			}
+			std::cout << name << "의 체력이 2 회복되었습니다.\n\n";
+		}
+		
 		break;
 	case 6:
 		isInvincible = true;
@@ -92,8 +110,8 @@ void BossMonster::attack(std::shared_ptr<Character> enemy)
 		break;
 	case 7:
 		std::cout << name << "가 [들쥐의 분노]를 시전했습니다!";
-		ATK += 16; // 수치 추후 조율
-		std::cout << name << "의 공격력이 추가로 6 올랐습니다!\n\n";
+		ATK += 9; // 수치 추후 조율
+		std::cout << name << "의 공격력이 추가로 9 올랐습니다!\n\n";
 		break;
 	default:
 		std::cout << "공격 패턴 출력 과정에서 오류 발생\n";
@@ -102,7 +120,17 @@ void BossMonster::attack(std::shared_ptr<Character> enemy)
 
 	std::cout << "\n[enter 키를 눌러 계속하기]";
 
-	_getch();
+	char c = _getch();
+	if (c == 'c')
+	{
+		cheatMode = true;
+		std::cout << "\n치트 모드가 활성화됩니다...";
+		Sleep(2000);
+		maxHP = 100;
+		currentHP = 100;
+		ATK = 8;
+		enemy->setCurrentHP(enemy->getMaxHP());
+	}
 	system("cls");
 }
 
@@ -142,7 +170,7 @@ void BossMonster::attackPattern4(std::shared_ptr<Character> enemy)
 	case 4:
 		// quiz #4
 		std::cout << "int a는 " << a << "이고, int b는 " << b << ",\n";
-		std::cout << "answer = (a & b)의 값은?\n"; // 이거 배웠나?
+		std::cout << "answer = (a & b)의 값은?\n";
 		std::cout << "answer의 값은?\n\n";
 		correctAnswer = (a & b);
 		break;
@@ -153,17 +181,25 @@ void BossMonster::attackPattern4(std::shared_ptr<Character> enemy)
 	if (playerAnswer != correctAnswer)
 	{
 		std::cout << name << ": 푸하하 틀렸지롱~\n";
-		std::cout << name << "가 공부하지 않은 님을 응징하고 체력을 350 회복합니다!\n";
+		std::cout << name << "가 공부하지 않은 님을 응징하고 체력을 80 회복합니다!\n";
 		enemy->takeDamage(ATK);
-		currentHP += 350;
+		currentHP += 80;
+		if (currentHP > maxHP)
+		{
+			currentHP = maxHP;
+		}
 	}
 	else
 	{
 		std::cout << name << ": 정답을 맞추다니...!! 이거 실화냐 찍찍~~??\n\n";
 		std::cout << enemy->getName() << "은 혼란을 틈타 " << name << "를 공격했습니다.\n";
-		takeDamage(enemy->getATK() * 0.6);
-		std::cout << '\n' << enemy->getName() << "은 자신감을 얻어 체력을 [8] 회복했습니다.\n";
-		enemy->setCurrentHP(enemy->getCurrentHP() + 8);
+		takeDamage(enemy->getATK());
+		std::cout << '\n' << enemy->getName() << "은 자신감을 얻어 체력을 [22] 회복했습니다.\n";
+		enemy->setCurrentHP(enemy->getCurrentHP() + 22);
+		if (enemy->getCurrentHP() > enemy-> getMaxHP())
+		{
+			enemy->setCurrentHP(enemy->getMaxHP());
+		}
 	}
 }
 
@@ -208,10 +244,6 @@ void BossMonster::death()
 {
 	std::cout << name << "크윽... 내가 지다니...!! 찍...\n";
 	std::cout << name << "를 쓰러뜨렸습니다~!!\n\n";
-
-	// 전투하면서 올랐던 공격력 수치 초기화.
-	// 만약 보스 죽이고 게임이 아예 끝난다면 이거 필요 없음.
-	ATK = 100;
 }
 
 // getters
