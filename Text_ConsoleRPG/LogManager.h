@@ -22,8 +22,8 @@ private:
 	void logThreadFunc();	// 백그라운드에서 실행될 쓰레드 함수
 	const char* levelToString(LogLevel level);	// enum을 문자열로 변환
 
-	std::string filename;
-	std::queue<std::string> logQueue;
+	std::string filename;	// 경로
+	std::queue<std::string> logQueue;	// 로그 메세지를 First In First Out 해줄 Queue
 	std::ofstream logFile;
 	std::thread logThread;
 	bool isLogRunning = false;

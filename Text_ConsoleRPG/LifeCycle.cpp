@@ -9,6 +9,10 @@
 #include "ConsumeItem.h"    // ConsumeItem, HPPotionItem
 #include "InventoryUI.h"
 #include "EquipItem.h"
+#include "LogManager.h"
+#include "LogMacros.h"
+#include <sstream>
+#include <thread>
 
 using namespace std;
 
@@ -50,6 +54,7 @@ LifeCycle::LifeCycle() : currentState(EGameState::Village), isRunning(true), dis
 
     for (int i = 0; i < items.size(); ++i) {
         shop->addStock(items[i], 100);
+        LOG_INFO("Item " + items[i]->itemName + " is added to Shop");
     }
 
 
@@ -99,6 +104,15 @@ void LifeCycle::Tick() {
     }
 
     Sleep(30); // 프레임 제한
+
+    /* 멀티 쓰레드 확인용 코드, LogManager.cpp -> void LogManager::logThreadFunc() 부분 확인
+    Sleep(1000);
+    std::thread::id tid = std::this_thread::get_id();
+    std::ostringstream oss;
+    oss << tid;
+    std::string thisThread = oss.str();
+    LogManager::getInstance().writeLog(LogLevel::DEBUG, "tid: " + thisThread);
+    */
 }
 
 // --- 각 상태별 로직 및 렌더링 ---
