@@ -32,4 +32,5 @@ private:
 	std::deque<std::string> s_logs;
 	static constexpr int MAX_LOGS = 5;
 	std::shared_ptr<Player> myPlayer = nullptr;
+	bool s_escaped = false;
 };

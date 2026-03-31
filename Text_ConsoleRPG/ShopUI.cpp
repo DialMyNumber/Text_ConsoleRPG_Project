@@ -144,9 +144,21 @@ std::shared_ptr<ItemBase> ShopUI::selectItem(const MapType& items, int startRow)
         ++row;
     }
 
+    int endRow = startRow + STOCK_ROWS;
+    while (row < endRow)
+        clearLine(row++);
+
     if (!_kbhit()) return nullptr;
 
     int key = _getch();
+
+    if (key == 27)
+    {
+        ResetUIState();
+        s_escaped = true;
+        return nullptr;
+    }
+
     if (key == 224)
     {
         key = _getch();
@@ -235,6 +247,8 @@ bool ShopUI::updateShopTick(Shop& shop, std::shared_ptr<Player> player)
     // ── 2. 아이템 선택 ──
     case EState::SelectItem:
     {
+        s_escaped = false;
+
         selectedItem = nullptr;
 
         showMenu(MENU_ROW + 2);
@@ -254,7 +268,6 @@ bool ShopUI::updateShopTick(Shop& shop, std::shared_ptr<Player> player)
             state = EState::Main;
             break;
         }
-
 
         if (action == 1) // 구매
         {
@@ -277,7 +290,11 @@ bool ShopUI::updateShopTick(Shop& shop, std::shared_ptr<Player> player)
             selectedItem = selectItem(shop.getBuyBack(), LIST_ROW + 2);
         }
 
-        if (selectedItem)
+        if (s_escaped)
+        {
+            state = EState::Main;
+        }
+        else if (selectedItem)
         {
             ResetUIState();
             state = EState::InputCount;
