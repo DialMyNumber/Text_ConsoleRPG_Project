@@ -10,7 +10,7 @@ Player::Player(std::string name, std::string job) : Character(name)
     this->level = 1;      // 기본값 초기화
     this->maxHP = 100;
     this->currentHP = 100;
-    this->ATK = 100;
+    this->ATK = 12;
     this->exp = 0;
     this->speed = 5;
 
@@ -100,12 +100,14 @@ void Player::printStatus()
 
 void Player::addExp(int amount) {
     this->exp += amount;
-    std::cout << amount << "의 경험치를 획득했습니다! (현재: " << exp << ")" << std::endl;
+    std::cout << amount << "의 경험치를 획득했습니다!" << std::endl;
 
     // 레벨업 조건: 현재 레벨 * 100 이상의 경험치 필요
     if (this->exp >= this->level * 100) {
         levelUp();
     }
+    
+    std::cout << "(현재 경험치: " << exp << ")" << std::endl;
 	Sleep(500); // 경험치 획득 모션을 표현하기 위한 딜레이 (500ms)
 }
 
@@ -114,10 +116,10 @@ void Player::levelUp() {
     this->level++; //
 
     // 성장 수치 적용
-    this->maxHP += 20;
+    this->maxHP += 60;
     this->currentHP = this->maxHP; // 레벨업 시 체력 풀회복은 국룰이죠!
-    this->ATK += 5;
-    this->speed += 2;
+    this->ATK += 7;
+    this->speed += 8;
 
     std::cout << "\n LEVEL UP!" << std::endl;
     std::cout << "레벨이 " << level << "이(가) 되었습니다! 모든 능력치가 상승합니다." << std::endl;
@@ -137,3 +139,11 @@ void Player::takeDamage(int amount) {
     // 회피 실패 시 부모 클래스의 기본 데미지 로직 실행
     Character::takeDamage(amount);
 }
+
+void Player::addMoney(int amount)
+{
+    this->money->addMoney(amount); // 돈 추가
+    std::cout << amount << "골드를 획득했습니다! (현재: " << this->money->getCurrentMoney() << ")" << std::endl;
+    Sleep(1000);
+}
+

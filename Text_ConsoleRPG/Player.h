@@ -26,6 +26,8 @@ public:
 
     void addExp(int amount); // 경험치 획득 함수
     void levelUp();          // 레벨업 처리 함수
+
+    void addMoney(int amount);
     
 
 private:

@@ -5,7 +5,8 @@
 #include <random>
 #include <iostream>
 #include <memory>
-#include <windows.h>
+#include <Windows.h>
+#include <conio.h>
 
 class Monster : public Character
 {
@@ -19,13 +20,11 @@ public:
 	virtual ~Monster() {} // 업캐스팅한 객체 소멸할때 필요
 
 	// getter
-	// 몬스터는 따로 인벤/돈 관리를 하지않고 단순하게 아이템/돈을 가지고 있고, 죽으면 드랍
-	std::string getItems() const;
+	// 몬스터는 경험치와 돈을 드랍
 	int getMoney() const;
 	std::vector<std::string> getAsciiArt() const;
 
 protected:
-	std::string items;
 	int money;
 	std::vector<std::string> asciiArt;
 };

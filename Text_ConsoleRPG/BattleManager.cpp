@@ -206,7 +206,7 @@ void BattleManager::BattleWithMonster(std::shared_ptr<Player> player, std::share
         for (const std::string& line : catArtLines) {
             std::cout << line << std::endl;
         }
- 
+
         for (const std::string& line : monsterPtr->getAsciiArt()) {
             std::cout << "                " << line << std::endl;
         }
@@ -227,9 +227,10 @@ void BattleManager::BattleWithMonster(std::shared_ptr<Player> player, std::share
 
             // 결과
             if (result == EBattleResult::PlayerWin) {
-                system("cls");
-                std::cout << "\n\n   승리했습니다! " << enemy->getName() << "을(를) 물리쳤습니다!" << std::endl;
+                /*system("cls");*/
+                std::cout << "\n\n승리했습니다! " << enemy->getName() << "을(를) 물리쳤습니다!" << std::endl;
                 // 경험치랑 아이템 드랍 구현
+                player->addMoney(monsterPtr->getMoney());
                 player->addExp(monsterPtr->getExp());
                 Sleep(1500);
             }

@@ -329,6 +329,7 @@ void LifeCycle::HandleDungeon() { // 플레이어의 이동 거리를 관리하여 배경이 움직
 
             // 현재 마주친 몬스터 정보를 전달(추후 BattleManager에서 구현)
             BattleManager::BattleWithMonster(mainPlayer, currentMonster);
+            system("cls");
             // 전투 후 map에서 삭제
             dungeonMonsters.erase(spawnPoint);
             // 끝나면 몬스터 없애기
@@ -341,7 +342,7 @@ void LifeCycle::HandleDungeon() { // 플레이어의 이동 거리를 관리하여 배경이 움직
 
     // 던전 출력
     cout << "================= [ 던전 ] ===============" << endl;
-    cout << "      거리: " << distance << "m | [ESC] 도망가기   " << endl;
+    cout << "      거리: " << distance << "m | [ESC] 나가기(던전 리셋)   " << endl;
     cout << "==========================================" << endl << endl;
 
     for (const string& line : catArt)
