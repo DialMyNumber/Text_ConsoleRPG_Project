@@ -21,8 +21,8 @@ public:
 	int getCurrentHP();
 	int getATK();
 	int getSpeed();
-
 	int getExp();
+	std::string getHPsubStat();
 
 	// setter ÇÔ¼ö
 

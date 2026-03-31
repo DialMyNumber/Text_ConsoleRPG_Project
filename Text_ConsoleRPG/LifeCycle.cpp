@@ -155,7 +155,7 @@ void LifeCycle::HandleVillage() {
     Gotoxy(infoX, infoY + 2); cout << "NAME   : " << mainPlayer->getName();
     Gotoxy(infoX, infoY + 3); cout << "LEVEL  : " << mainPlayer->getLevel();
     Gotoxy(infoX, infoY + 4); cout << "ATK    : " << mainPlayer->getATK();
-    Gotoxy(infoX, infoY + 5); cout << "HEALTH : " << mainPlayer->getCurrentHP() << " / " << mainPlayer->getMaxHP();
+    Gotoxy(infoX, infoY + 5); cout << "HEALTH : " << mainPlayer->getCurrentHP() << " / " << mainPlayer->getHPsubStat();
     Gotoxy(infoX, infoY + 6); cout << "GOLD   : " << mainPlayer->GetMoney()->getCurrentMoney() << " G";
     Gotoxy(infoX, infoY + 7); cout << "EXP    : " << mainPlayer->getExp() << " EXP";
 

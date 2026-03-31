@@ -64,6 +64,19 @@ int Character::getExp()
 {
 	return exp;
 }
+std::string Character::getHPsubStat() {
+	// 기본 체력(100)과 레벨업당 성장치(60)를 제외한 순수 추가 스탯 계산
+	int subStat = maxHP - 100 - (level - 1) * 60;
+
+	if (subStat > 0)
+	{
+		// 추가 스탯이 있는 경우: "기본+성장치 + 추가스탯" 형식으로 반환
+		return std::to_string(maxHP) + "+" + "("+std::to_string(subStat)+")";
+	}
+
+	// 추가 스탯이 없는 경우 전체 수치만 문자열로 반환
+	return std::to_string(maxHP);
+}
 
 // setter 함수
 
