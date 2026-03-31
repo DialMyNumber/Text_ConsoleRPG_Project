@@ -2,6 +2,8 @@
 #include <iostream>
 #include "Character.h"
 #include "LogMacros.h"
+#include "Player.h"
+#include <windows.h>
 
 bool HPPotionItem::ApplyEffect(const std::shared_ptr<Character> character)
 {
@@ -57,10 +59,9 @@ bool ExpScroll::ApplyEffect(const std::shared_ptr<Character> character)
 			logMsg.append(character->getName());
 			LOG_INFO(logMsg);
 
-			size_t newExp = character->getExp() + exp;
-
-			// 증가된 경험치 적용
-			character->setExp(newExp);
+			auto characterPtr = std::dynamic_pointer_cast<Player>(character); // addExp()에 접근하기 위한 다운캐스팅
+			system("cls");  // 인벤토리 화면 없애기
+			characterPtr->addExp(exp);
 
 			return true;
 		}
